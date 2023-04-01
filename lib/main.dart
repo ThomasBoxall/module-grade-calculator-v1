@@ -15,11 +15,6 @@ void main() {
     title: 'Module Grade Calculator',
     home: FirstRoute(),
   ));
-
-  myAssessments.add(Assessment("one", 10, 10));
-  myAssessments.add(Assessment("two", 10, 10));
-  myAssessments.add(Assessment("three", 10, 10));
-  print("${myAssessments.length}");
 }
 
 
@@ -52,7 +47,9 @@ class _HomeState extends State<FirstRoute>{
         title: const Text('Assessment Overview'),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
+          Text("Total Mark: $currentTotalPercent%"),
           Expanded(
             child: ListView.builder(
               itemCount: assessmentMap.length,
@@ -64,7 +61,6 @@ class _HomeState extends State<FirstRoute>{
               }
             )
           ),
-         Text("Total Mark: "),
         ]
       ),
       floatingActionButton: FloatingActionButton(
