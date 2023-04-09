@@ -12,13 +12,20 @@ class Assessment{
 
 List myAssessments = [];
 
+// custom class to hold arguments passed from assessmentOverview route to edit/ add assessment route
+class ScreenArguments{
+  bool editMode;
+  int assessmentIndex; 
+
+  ScreenArguments(this.editMode, [this.assessmentIndex = -1]);
+}
+
 void main() {
   runApp(const MaterialApp(
     title: 'Module Grade Calculator',
     home: AssessmentOverviewRoute(),
     color: Colors.purple,
   ));
-
 }
 
 
@@ -82,9 +89,16 @@ class _HomeState extends State<AssessmentOverviewRoute>{
                           size: 20.0,
                           color: Colors.black,
                         ),
-                        onPressed: (){
-                          print(index);
-                        }
+                        onPressed: () {
+                          bool editMode = true;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AddAssessmentRoute(),
+                                settings: RouteSettings(arguments: ScreenArguments(true, index)),
+                                ),
+                            ).then((res) => refreshHomeRoute());
+                          }
                         ),
                     ]
                   )
@@ -96,9 +110,13 @@ class _HomeState extends State<AssessmentOverviewRoute>{
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          bool editMode = false;
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const AddAssessmentRoute()),
+              MaterialPageRoute(
+                builder: (context) => const AddAssessmentRoute(),
+                settings: RouteSettings(arguments: ScreenArguments(false)),
+                ),
             ).then((res) => refreshHomeRoute());
           },
         tooltip: 'Add',
@@ -110,26 +128,50 @@ class _HomeState extends State<AssessmentOverviewRoute>{
 
 class AddAssessmentRoute extends StatefulWidget {
   const AddAssessmentRoute({super.key});
+  
 
   @override
   State<AddAssessmentRoute> createState() => _AddAssessmentFormState();
 }
 
 class _AddAssessmentFormState extends State<AddAssessmentRoute>{
-  final assessmentIdentifierController = TextEditingController();
+  var assessmentIdentifierController = TextEditingController();
   final assessmentPercentController = TextEditingController();
   final markController = TextEditingController();
+  
 
   void addAssessment(){
     myAssessments.add(Assessment(assessmentIdentifierController.text, int.parse(assessmentPercentController.text), int.parse(markController.text)));
+  }
+  void saveButton(bool editMode, [int index = -1]){
+    if(!editMode){
+      addAssessment();
+    }else{
+      myAssessments[index].assessmentTitle = assessmentIdentifierController.text;
+      myAssessments[index].assessmentPercent = int.parse(assessmentPercentController.text);
+      myAssessments[index].markPercent = int.parse(markController.text);
+    }
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    // setup vars which we can change depending on mode
+    String modeString = "Add";
+
+    // get contents of the arguments we passed in when generating this route
+    ScreenArguments screenArgs = ModalRoute.of(context)!.settings.arguments as ScreenArguments;
+    // if the route is in edit mode then we need to setup for it
+    if (screenArgs.editMode){
+      assessmentIdentifierController.text = myAssessments[screenArgs.assessmentIndex].assessmentTitle;
+      assessmentPercentController.text = myAssessments[screenArgs.assessmentIndex].assessmentPercent.toString();
+      markController.text = myAssessments[screenArgs.assessmentIndex].markPercent.toString();
+      modeString = "Edit";
+    }
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Assessment'),
+        title: Text('$modeString Assessment'),
       ),
       body: Column(
         children: <Widget>[
@@ -139,7 +181,7 @@ class _AddAssessmentFormState extends State<AddAssessmentRoute>{
                 controller: assessmentIdentifierController,
                 decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
-                  labelText: 'Enter assessment identifier',
+                  labelText: 'Assessment identifier',
                 ),
               ),
           ),
@@ -149,7 +191,7 @@ class _AddAssessmentFormState extends State<AddAssessmentRoute>{
                 controller: assessmentPercentController,
                 decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
-                  labelText: 'Enter assessment percent',
+                  labelText: 'Assessment percent (of overall module)',
                 ),
               ),
           ),
@@ -159,7 +201,7 @@ class _AddAssessmentFormState extends State<AddAssessmentRoute>{
                 controller: markController,
                 decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
-                  labelText: 'Enter your mark (as a percent)',
+                  labelText: 'Your mark (as a percent)',
                 ),
               ),
           ),
@@ -177,7 +219,8 @@ class _AddAssessmentFormState extends State<AddAssessmentRoute>{
                 ),
                 ElevatedButton( 
                   onPressed: (){
-                    addAssessment();
+                    // addAssessment();
+                    saveButton(screenArgs.editMode, screenArgs.assessmentIndex);
                   },
                   child: const Text('Save'),
                 )

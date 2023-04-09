@@ -10,3 +10,13 @@ Make sure that flutter is installed and up-to-date by running:
 
 Then run the app with:
 `flutter run`
+
+## TODO
+- Clean up code 
+- Better document code
+- Add assessment type indicator which adds a suitable icon to the left of ListTile (see https://api.flutter.dev/flutter/material/ListTile-class.html)
+- Add input validation to int text boxes
+- Add validation to stop over 100% of total module being added
+
+### Long-term ideas
+- Add a way to 'load' assessments (eg have a JSON file saved with assessment templates saved that can be loaded and filled out)
