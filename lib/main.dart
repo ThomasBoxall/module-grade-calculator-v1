@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 class Assessment{
@@ -13,20 +15,22 @@ List myAssessments = [];
 void main() {
   runApp(const MaterialApp(
     title: 'Module Grade Calculator',
-    home: FirstRoute(),
+    home: AssessmentOverviewRoute(),
+    color: Colors.purple,
   ));
+
 }
 
 
 
-class FirstRoute extends StatefulWidget {
-  const FirstRoute({super.key});
+class AssessmentOverviewRoute extends StatefulWidget {
+  const AssessmentOverviewRoute({super.key});
 
   @override
-  State<FirstRoute> createState() => _HomeState();
+  State<AssessmentOverviewRoute> createState() => _HomeState();
 }
 
-class _HomeState extends State<FirstRoute>{
+class _HomeState extends State<AssessmentOverviewRoute>{
   final Map<String, String> assessmentMap = {};
   double currentTotalPercent = 0;
 
@@ -58,6 +62,32 @@ class _HomeState extends State<FirstRoute>{
                 return ListTile(
                   title: Text(assessmentMap.keys.elementAt(index)),
                   subtitle: Text(assessmentMap.values.elementAt(index)),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(
+                          Icons.delete,
+                          size: 20.0,
+                          color: Colors.black,
+                        ),
+                        onPressed: (){
+                          myAssessments.removeAt(index);
+                          refreshHomeRoute();
+                        }
+                        ),
+                        IconButton(
+                        icon: Icon(
+                          Icons.edit,
+                          size: 20.0,
+                          color: Colors.black,
+                        ),
+                        onPressed: (){
+                          print(index);
+                        }
+                        ),
+                    ]
+                  )
                 );
               }
             )
@@ -68,7 +98,7 @@ class _HomeState extends State<FirstRoute>{
         onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const SecondRoute()),
+              MaterialPageRoute(builder: (context) => const AddAssessmentRoute()),
             ).then((res) => refreshHomeRoute());
           },
         tooltip: 'Add',
@@ -78,14 +108,14 @@ class _HomeState extends State<FirstRoute>{
   }
 }
 
-class SecondRoute extends StatefulWidget {
-  const SecondRoute({super.key});
+class AddAssessmentRoute extends StatefulWidget {
+  const AddAssessmentRoute({super.key});
 
   @override
-  State<SecondRoute> createState() => _InputAssessmentFormState();
+  State<AddAssessmentRoute> createState() => _AddAssessmentFormState();
 }
 
-class _InputAssessmentFormState extends State<SecondRoute>{
+class _AddAssessmentFormState extends State<AddAssessmentRoute>{
   final assessmentIdentifierController = TextEditingController();
   final assessmentPercentController = TextEditingController();
   final markController = TextEditingController();
@@ -160,5 +190,3 @@ class _InputAssessmentFormState extends State<SecondRoute>{
   }
 }
 
-// TODO:
-// move the total mark text to above the listview - try to separate the two with a line or something? 
