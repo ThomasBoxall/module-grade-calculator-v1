@@ -33,6 +33,7 @@ class _HomeState extends State<FirstRoute>{
   void refreshHomeRoute(){
     setState(() {
       assessmentMap.clear();
+      currentTotalPercent = 0;
       for (Assessment each in myAssessments){
         double eachTotalPercent = ((each.assessmentPercent!.toDouble()/100) * each.markPercent!.toDouble());
         currentTotalPercent = currentTotalPercent + eachTotalPercent; 
