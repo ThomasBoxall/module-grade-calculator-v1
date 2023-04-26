@@ -189,6 +189,7 @@ class _AddAssessmentFormState extends State<AddAssessmentRoute>{
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               child: TextFormField(
                 controller: assessmentPercentController,
+                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
                   labelText: 'Assessment percent (of overall module)',
@@ -199,6 +200,7 @@ class _AddAssessmentFormState extends State<AddAssessmentRoute>{
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               child: TextFormField(
                 controller: markController,
+                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
                   labelText: 'Your mark (as a percent)',
