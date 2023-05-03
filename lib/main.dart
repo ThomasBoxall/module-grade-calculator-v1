@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 
 class Assessment{
   String assessmentTitle;
-  int? assessmentPercent;
-  int? markPercent;
+  int assessmentPercent;
+  int markPercent;
 
   Assessment(this.assessmentTitle, this.assessmentPercent, this.markPercent);
+
+  String getAssessmentTitle() => assessmentTitle;
+  int getAssessmentPercent() => assessmentPercent;
+  int getMarkPercent() => markPercent;
 }
 
 List myAssessments = [];
@@ -42,6 +46,7 @@ class _HomeState extends State<AssessmentOverviewRoute>{
   double currentTotalPercent = 0;
 
   void refreshHomeRoute(){
+    /// Updates view assessment route to display everything in myAssessments
     setState(() {
       assessmentMap.clear();
       currentTotalPercent = 0;
@@ -140,23 +145,96 @@ class _AddAssessmentFormState extends State<AddAssessmentRoute>{
   final markController = TextEditingController();
   
 
-  void addAssessment(){
-    myAssessments.add(Assessment(assessmentIdentifierController.text, int.parse(assessmentPercentController.text), int.parse(markController.text)));
-  }
-  void saveButton(bool editMode, [int index = -1]){
-    if(!editMode){
-      addAssessment();
-    }else{
-      myAssessments[index].assessmentTitle = assessmentIdentifierController.text;
-      myAssessments[index].assessmentPercent = int.parse(assessmentPercentController.text);
-      myAssessments[index].markPercent = int.parse(markController.text);
+  bool isNumeric(String s) {
+    if (s == null) {
+      return false;
     }
-    Navigator.pop(context);
+    return double.tryParse(s) != null;
+    }
+
+  int getTotalAssessmentPercent(){
+    /// Returns total of assessment value percentages from myAssessments list.
+    int totalAssessmentPercent = 0;
+    for (Assessment assm in myAssessments){
+      totalAssessmentPercent += assm.getAssessmentPercent();
+    }
+    return totalAssessmentPercent;
   }
+
+  int getTotalAssessmentPercentIgnore(int ignoreIndex){
+    /// Returns total of assessment value percentages from myAssessments list ignoring specified index
+    /// ignoring specific index is needed for when editing an assessment
+    String ignoreAssessmentIdentifer = myAssessments[ignoreIndex].getAssessmentTitle();
+    int totalAssessmentPercent = 0;
+    for (Assessment assm in myAssessments){
+      if (assm.getAssessmentTitle() != ignoreAssessmentIdentifer){
+        totalAssessmentPercent += assm.getAssessmentPercent();
+      }
+    }
+    return totalAssessmentPercent;
+  }
+
+  bool checkAssessmentPercentValid(bool editMode, int index){
+    /// checks if the total percentage of saved assessments and the new one to be added / saved assessments and the edited value is below 100 therefore valid
+    /// uses `editMode` to determine if to check with ignoring an index or not
+    if(editMode){
+      // we can assume that index will be present
+      return getTotalAssessmentPercentIgnore(index) + int.parse(assessmentPercentController.text) <= 100;
+    }else{
+      // we can assume that index won't have been passed
+      return getTotalAssessmentPercent() + int.parse(assessmentPercentController.text) <= 100;
+    }
+  }
+
+  void saveButton(bool editMode, [int index = -1]){
+    /// validates input to some textboxes then updates assessment or creates new assessment
+    if (isNumeric(assessmentPercentController.text) && isNumeric(markController.text)){
+      if (checkAssessmentPercentValid(editMode, index)){
+        if(!editMode){
+          myAssessments.add(Assessment(assessmentIdentifierController.text, int.parse(assessmentPercentController.text), int.parse(markController.text)));
+        }else{
+          myAssessments[index].assessmentTitle = assessmentIdentifierController.text;
+          myAssessments[index].assessmentPercent = int.parse(assessmentPercentController.text);
+          myAssessments[index].markPercent = int.parse(markController.text);
+        }
+        Navigator.pop(context);
+        }else{
+           showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Too much assessment!'),
+              content: const Text('The value you have entered into the assessment percentage textbox and those of your already added assessments exceed 100%. Try again.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'OK'),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }//end value check else
+    }else{
+      // show the user a dialogue which prompts them to re-enter them. 
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Non number detected!'),
+          content: const Text('The values in the assessment percentage and mark percentage textboxes should be whole numbers. Try again.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'OK'),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      ); //end showDialogue
+    } // end isNumeric else
+  } // end void saveButton
 
   @override
   Widget build(BuildContext context) {
     // setup vars which we can change depending on mode
+    // default to add mode
     String modeString = "Add";
 
     // get contents of the arguments we passed in when generating this route
@@ -221,7 +299,6 @@ class _AddAssessmentFormState extends State<AddAssessmentRoute>{
                 ),
                 ElevatedButton( 
                   onPressed: (){
-                    // addAssessment();
                     saveButton(screenArgs.editMode, screenArgs.assessmentIndex);
                   },
                   child: const Text('Save'),
