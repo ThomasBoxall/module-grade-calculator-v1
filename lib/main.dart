@@ -25,11 +25,23 @@ class ScreenArguments{
 }
 
 void main() {
-  runApp(const MaterialApp(
-    title: 'Module Grade Calculator',
-    home: AssessmentOverviewRoute(),
-    color: Colors.purple,
-  ));
+  runApp(MyApp());
+}
+
+// MyApp class, entry point to the app
+
+class MyApp extends StatelessWidget{
+  @override
+  Widget build(BuildContext context){
+    return  MaterialApp(
+      title: 'Module Grade Calculator',
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        primaryColor: Colors.lightBlue,
+      ),
+      home: AssessmentOverviewRoute(),
+    );
+  }
 }
 
 
@@ -81,7 +93,7 @@ class _HomeState extends State<AssessmentOverviewRoute>{
                         icon: Icon(
                           Icons.delete,
                           size: 20.0,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                         onPressed: (){
                           myAssessments.removeAt(index);
@@ -92,7 +104,7 @@ class _HomeState extends State<AssessmentOverviewRoute>{
                         icon: Icon(
                           Icons.edit,
                           size: 20.0,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                         onPressed: () {
                           bool editMode = true;
