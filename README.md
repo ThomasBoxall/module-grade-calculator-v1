@@ -1,8 +1,10 @@
-# Module Grade Calculator
+# Module Grade Calculator (v1)
 
-A program to calculate the module grades based on the mark achieved in each assessment and the weightings of the assessments.
+This app calculates the module based on the mark achieved in each assessment and the weightings of the assessments.
 
-This is my first app written using Flutter, proceed with caution...
+It was my first app written using Dart with the Flutter Framework, so procede with Caution.
+
+I completely rebuilt this app for a module in the second year of my Degree - see [https://github.com/ThomasBoxall/module-grade-calculator-v2](ThomasBoxall/module-grade-calculator-v2) for that!
 
 ## Usage
 Make sure that flutter is installed and up-to-date by running:
