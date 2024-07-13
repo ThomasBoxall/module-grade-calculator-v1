@@ -4,7 +4,7 @@ This app calculates the module based on the mark achieved in each assessment and
 
 It was my first app written using Dart with the Flutter Framework, so procede with Caution.
 
-I completely rebuilt this app for a module in the second year of my Degree - see [https://github.com/ThomasBoxall/module-grade-calculator-v2](ThomasBoxall/module-grade-calculator-v2) for that!
+I completely rebuilt this app for a module in the second year of my Degree - see [ThomasBoxall/module-grade-calculator-v2](https://github.com/ThomasBoxall/module-grade-calculator-v2) for that!
 
 ## Usage
 Make sure that flutter is installed and up-to-date by running:
